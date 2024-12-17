@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Vastness: Memory of Color</title>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+    <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.31/"></script>
+ <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      ion-split-pane {
+        --side-width: 50%;
+        --side-max-width: 50%;
+        --border: none;
+      }
+
+     #mapbar {
+        --background: none; /* Remove default background */
+        background: linear-gradient(90deg, rgba(146,190,240,1) 23%, rgba(60,113,186,1) 48%, rgba(89,139,207,1) 73%);
+      }
+
+      #swiperbar {
+        --background: none; /* Remove default background */
+        background: #598bcf;
+      }
+
+    </style>
+  </head>
+  <body>
+
+   
+    <ion-split-pane when="xs" content-id="main">
+  <ion-menu content-id="main">
+    <ion-header>
+      <ion-toolbar id="mapbar">
+        <ion-title>Vastness: Memory of Color</ion-title>
+      </ion-toolbar>
+    </ion-header>
+     <div id="viewDiv"></div>
+  </ion-menu>
+
+  <div class="ion-page" id="main">
+    <ion-header>
+      <ion-toolbar id="swiperbar">
+       
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding"> 
+      <!-- Slider main container -->
+<div class="swiper">
+  <!-- Additional required wrapper -->
+  <div class="swiper-wrapper">
+    <!-- Slides -->
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+    ...
+  </div>
+  <!-- If we need pagination -->
+  <div class="swiper-pagination"></div>
+
+  <!-- If we need navigation buttons -->
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+
+  <!-- If we need scrollbar -->
+  <div class="swiper-scrollbar"></div>
+</div>
+
+     </ion-content>
+  </div>
+</ion-split-pane>
+
+  </body>
+
+  <script>
+    require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], (Map, MapView, FeatureLayer) => {
+
+      const map = new Map({
+        basemap: "topo-vector" // Use the desired basemap name
+      });
+
+      const view = new MapView({
+        container: "viewDiv", // Replace with the ID of your HTML container
+        map: map, 
+        center: [-88.0312715, 47.201094], // Set your desired center coordinates
+        zoom: 9 // Set your desired zoom level
+      });    
+
+        // Trailheads feature layer (points)
+        const photoLayer = new FeatureLayer({
+          url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Vastness_Photograph_Locations/FeatureServer/0"
+        });
+
+        map.add(photoLayer);
+     
+
+        const swiper = new Swiper('.swiper', {
+          // Optional parameters
+          direction: 'vertical',
+          loop: true,
+
+          // If we need pagination
+          pagination: {
+            el: '.swiper-pagination',
+          },
+
+          // Navigation arrows
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+
+          // And if we need scrollbar
+          scrollbar: {
+            el: '.swiper-scrollbar',
+          },
+        });
+
+    });
+  </script>
+
+</html>
