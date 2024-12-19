@@ -3,6 +3,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Vastness: Memory of Color</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rambla:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
@@ -11,41 +17,122 @@
     <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
     <script src="https://js.arcgis.com/4.31/"></script>
  <style>
-      html,
-      body,
-      #viewDiv {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-      }
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;      
+    }
 
-      ion-split-pane {
-        --side-width: 50%;
-        --side-max-width: 50%;
-        --border: none;
-      }
+    ion-split-pane {
+      --side-width: 50%;
+      --side-max-width: 50%;
+      --border: none;
+    }
 
-     #mapbar {
-        --background: none; /* Remove default background */
-        background: linear-gradient(90deg, rgba(146,190,240,1) 23%, rgba(60,113,186,1) 48%, rgba(89,139,207,1) 73%);
-      }
+   #mapbar {
+      --background: none; /* Remove default background */
+      background: linear-gradient(90deg, rgba(146,190,240,1) 23%, rgba(60,113,186,1) 48%, rgba(89,139,207,1) 73%);
+    }
 
-      #swiperbar {
-        --background: none; /* Remove default background */
-        background: #598bcf;
+    #swiperbar {
+      --background: none; /* Remove default background */
+      background: #598bcf;
+    }
+      
+    .splash-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(90deg, rgba(146,190,240,1) 23%, rgba(60,113,186,1) 48%, rgba(89,139,207,1) 73%);
+      color: white;
+      font-family: 'K2D', serif;
+      animation: fadeOut 2s ease forwards;
+      animation-delay: 5s;
+
+    }
+    .title {
+      font-size: 4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      letter-spacing: 3px;
+      animation: windEffect 3s ease forwards;
+    }
+    .subtitle {  
+      font-family: 'Rambla', serif;    
+      font-size: 2rem;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 3s;
+    }
+
+    @keyframes windEffect {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
       }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .main-content {
+      display: block;
+    }
+
+    #caption {
+      position: fixed;
+      top: 0;
+      margin-left: 20px;
+       justify-content: center;
+      align-items: center;
+      font-family: 'Rambla', serif;    
+      font-size: 2rem;
+      font-style: italic;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 3s;
+    }
 
     </style>
   </head>
-  <body>
+  <body> 
 
-   
-    <ion-split-pane when="xs" content-id="main">
+<div class="main-content" id="content">
+  <ion-split-pane when="xs" content-id="main">
   <ion-menu content-id="main">
     <ion-header>
       <ion-toolbar id="mapbar">
-        <ion-title>Vastness: Memory of Color</ion-title>
+        <ion-title style="font-family: 'K2D', serif; font-size: 26pt; color:white; letter-spacing: 1px"><b>Vastness:</b> Memory of Color</ion-title>
       </ion-toolbar>
     </ion-header>
      <div id="viewDiv"></div>
@@ -61,12 +148,7 @@
       <!-- Slider main container -->
 <div class="swiper">
   <!-- Additional required wrapper -->
-  <div class="swiper-wrapper">
-    <!-- Slides -->
-    <div class="swiper-slide">Slide 1</div>
-    <div class="swiper-slide">Slide 2</div>
-    <div class="swiper-slide">Slide 3</div>
-    ...
+  <div class="swiper-wrapper">   
   </div>
   <!-- If we need pagination -->
   <div class="swiper-pagination"></div>
@@ -82,54 +164,123 @@
      </ion-content>
   </div>
 </ion-split-pane>
+</div>
+
+ <div class="splash-screen" id="splash">
+    <div class="title">VASTNESS: Memory of Color</div>
+    <div class="subtitle">Art, Sounds & Meditation</div>
+    
+  </div>
 
   </body>
 
   <script>
-    require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], (Map, MapView, FeatureLayer) => {
 
-      const map = new Map({
-        basemap: "topo-vector" // Use the desired basemap name
-      });
+   setTimeout(() => {
+     document.getElementById('splash').style.display = 'none';
+     document.getElementById('content').style.display = 'block';
 
-      const view = new MapView({
-        container: "viewDiv", // Replace with the ID of your HTML container
-        map: map, 
-        center: [-88.0312715, 47.201094], // Set your desired center coordinates
-        zoom: 9 // Set your desired zoom level
-      });    
+   }, 6000); // 3s animation + 1s buffer
 
-        // Trailheads feature layer (points)
-        const photoLayer = new FeatureLayer({
-          url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Vastness_Photograph_Locations/FeatureServer/0"
-        });
+   require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], (Map, MapView, FeatureLayer) => {
+  const map = new Map({
+    basemap: "topo-vector"
+  });
 
-        map.add(photoLayer);
-     
+  const view = new MapView({
+    container: "viewDiv",
+    map: map,
+    center: [-88.0312715, 47.201094],
+    zoom: 9
+  });
 
-        const swiper = new Swiper('.swiper', {
-          // Optional parameters
-          direction: 'vertical',
-          loop: true,
+  const photoLayer = new FeatureLayer({
+    url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Vastness_Photograph_Locations/FeatureServer/0",
+    outFields: ["Image_No", "Date", "Caption"] 
+  });
 
-          // If we need pagination
-          pagination: {
-            el: '.swiper-pagination',
-          },
+  map.add(photoLayer);
 
-          // Navigation arrows
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
+  const swiper = new Swiper('.swiper', {
+    direction: 'horizontal',
+    loop: false,
+    pagination: {
+      el: '.swiper-pagination',
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    scrollbar: {
+      el: '.swiper-scrollbar',
+    },
+  });
 
-          // And if we need scrollbar
-          scrollbar: {
-            el: '.swiper-scrollbar',
-          },
-        });
+  // Store the highlight handle
+  let highlightHandle;
 
+  // Fetch features and populate Swiper slides
+  photoLayer.queryFeatures({
+    where: "1=1",
+    outFields: ["Image_No", "Date", "Caption"],
+    returnGeometry: true
+  }).then((results) => {
+    const features = results.features;
+    console.log(features);
+    features.forEach((feature, index) => {
+      const attributes = feature.attributes;
+
+      // Create Swiper slide
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      slide.innerHTML = `
+        <img src="images/${attributes.Image_No}.jpg" alt="${attributes.Caption}" style="width: 100%; height: auto;">
+        <div id="date">${attributes.Date}</p></div>
+        <div id="caption"><p>${attributes.Caption}</p></div>
+      `;
+      slide.dataset.index = index;
+      document.querySelector(".swiper-wrapper").appendChild(slide);
     });
+
+    swiper.update();
+
+    // Synchronize Swiper slide change with map
+    swiper.on("slideChange", () => {
+      const activeIndex = swiper.activeIndex;
+      const activeFeature = features[activeIndex];
+
+      if (activeFeature && activeFeature.geometry) {
+        // Highlight the feature
+        view.whenLayerView(photoLayer).then((layerView) => {
+          if (highlightHandle) {
+            highlightHandle.remove(); // Clear previous highlights
+          }
+
+          highlightHandle = layerView.highlight(activeFeature);
+
+          // Zoom to the feature
+          view.goTo({
+            center: activeFeature.geometry,
+            zoom: 12
+          });
+        });
+      }
+    });
+
+    // Handle map clicks to sync with Swiper
+    view.on("click", (event) => {
+      view.hitTest(event).then((response) => {
+        const graphic = response.results.find((result) => result.graphic.layer === photoLayer);
+        if (graphic) {
+          console.log(graphic);
+          const clickedIndex = features.findIndex((f) => f.attributes.Image_No === graphic.graphic.attributes.Image_No);
+          swiper.slideTo(clickedIndex);
+        }
+      });
+    });
+  });
+});
+
   </script>
 
 </html>
