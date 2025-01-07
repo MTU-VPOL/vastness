@@ -13,6 +13,7 @@
     <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
     <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
     <script src="https://js.arcgis.com/4.31/"></script>
@@ -48,7 +49,9 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(90deg, rgba(146,190,240,1) 23%, rgba(60,113,186,1) 48%, rgba(89,139,207,1) 73%);
+       background-image: url("images/background.jpg");
+       background-size: cover;
+    
       color: white;
       font-family: 'K2D', serif;
       animation: fadeOut 2s ease forwards;
@@ -123,15 +126,90 @@
       animation-delay: 3s;
     }
 
+    #date {
+      position: fixed;
+      top: 10;
+      left: 30px;
+    }
+
+    #openModal {
+      --background: none !important;
+    }
+
+    #modalBar {
+      --background:linear-gradient(90deg, rgba(146,190,240,1) 23%, rgba(60,113,186,1) 48%, rgba(89,139,207,1) 73%);    }
+
+      /* Custom CSS for round zoom controls */
+        .esri-widget {
+          background-color: rgba(0,0,0,0) !important;
+          box-shadow: 0 2px 4px rgba(0,0,0,0) !important;
+        }
+
+        .esri-widget--button {
+          background-color: none; /* Set background color */          
+          border-radius: 100%; /* Make them round */
+          width: 50px; /* Width of the button */
+          height: 50px; /* Height of the button */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add shadow */
+          margin: 10px; /* Margin between buttons */
+          padding: 0;
+        }
+
+        .esri-widget--button .esri-icon {
+            margin: 0; /* Center the icon */
+            font-size: 40px; /* Size of the icon */
+            font-weight: 700;
+            color: #0079c1; /* Icon color */
+        }
+
+       .esri-view .esri-view-surface--touch-none:focus::after {
+          outline: none !important;
+        }
+
     </style>
   </head>
   <body> 
 
+      <ion-modal trigger="open-modal">
+    <ion-header>
+      <ion-toolbar id="modalBar">        
+        <ion-title style="font-family: 'Rambla', serif;">About this Project</ion-title>
+        <ion-buttons slot="end">
+          <ion-button strong="true" id="close">X</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <img
+  src="images/library.jpg"
+  alt="Vastness exhibit in the Opie Reading Room of the Library"
+></img>
+      <ion-text style="font-family: 'Rambla', serif;"><h3>About</h3></ion-text>
+      <ion-text>
+        <p>Vastness: Memory of Color is a collaboration initiated by Anne Beffel. Beginning with her photographs of Lake Superior, Sound Designers Aidan Conrade, Jayden Palarz, and Tom Stiles interpreted the images using audio. Angie Gecosky assisted with video editing and coordinated production. Our goal was to create a meditative experience (loosely defined) for viewer- participants. </p>   
+        <p>The photographs are based on Beffel’s observations of the relationship between vision and our daily lives. How we see influences us just as much as what we see. Visual perception is a fluid process of translating color and shape into images. These images enable us to come closer to a shared experience, even as we view the world from different subject positions.</p> 
+        
+      </ion-text> 
+        <ion-text style="font-family: 'Rambla', serif;"><h3>Using the Application</h3></ion-text>
+        <ion-text><p>Swipe left or right or press the left or right arrows to view photographs. The map will automatically update with a corresponding location of where each photograph was taken.</p></ion-text> 
+        <ion-text>To listen to the sounds from the exhibit, scan the QR code below.</ion-text>
+        <img src="images/qr.png"></img>        
+    </ion-content>
+  </ion-modal>
 <div class="main-content" id="content">
   <ion-split-pane when="xs" content-id="main">
   <ion-menu content-id="main">
     <ion-header>
       <ion-toolbar id="mapbar">
+         <ion-buttons slot="start">
+            <ion-button text="HOME" icon="home-outline" style="color:white;" onclick="window.open('https://mtu-vpol.github.io/kiosk','_self')"><ion-icon name="caret-back"></ion-icon> MENU</ion-back-button>
+          </ion-buttons>     
+           <ion-buttons slot="start">
+        <ion-img src="images/huskywhite.svg" style="width: 50px; height: 50px;"></ion-img>
+      </ion-buttons>    
         <ion-title style="font-family: 'K2D', serif; font-size: 26pt; color:white; letter-spacing: 1px"><b>Vastness:</b> Memory of Color</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -141,7 +219,9 @@
   <div class="ion-page" id="main">
     <ion-header>
       <ion-toolbar id="swiperbar">
-       
+        <ion-button size="med" slot="end"  id="openModal">
+  <ion-icon name="information-circle-outline" size="large" slot="icon-only"></ion-icon>
+</ion-button>  
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding"> 
@@ -183,6 +263,8 @@
    }, 6000); // 3s animation + 1s buffer
 
    require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], (Map, MapView, FeatureLayer) => {
+
+     var modal = document.querySelector('ion-modal'); 
   const map = new Map({
     basemap: "topo-vector"
   });
@@ -194,9 +276,26 @@
     zoom: 9
   });
 
+   const simpleMarkerSymbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              path: "M12 0C5.373 0 0 5.373 0 12C0 22.725 12 36 12 36C12 36 24 22.725 24 12C24 5.373 18.627 0 12 0Z",
+              color: "rgba(89,139,207,1)",
+              outline: {
+                color: "white",
+                width: 2
+              },
+              size: "34px",
+            };
+
+            const pin = {
+              type: "simple",
+              symbol: simpleMarkerSymbol
+            };
+
   const photoLayer = new FeatureLayer({
     url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Vastness_Photograph_Locations/FeatureServer/0",
-    outFields: ["Image_No", "Date", "Caption"] 
+    outFields: ["Image_No", "Date", "Caption"],
+    renderer: pin
   });
 
   map.add(photoLayer);
@@ -222,7 +321,7 @@
   // Fetch features and populate Swiper slides
   photoLayer.queryFeatures({
     where: "1=1",
-    outFields: ["Image_No", "Date", "Caption"],
+    outFields: ["*"],
     returnGeometry: true
   }).then((results) => {
     const features = results.features;
@@ -235,7 +334,7 @@
       slide.className = "swiper-slide";
       slide.innerHTML = `
         <img src="images/${attributes.Image_No}.jpg" alt="${attributes.Caption}" style="width: 100%; height: auto;">
-        <div id="date">${attributes.Date}</p></div>
+        <div id="date">Photo taken on ${attributes.Date}</p></div>
         <div id="caption"><p>${attributes.Caption}</p></div>
       `;
       slide.dataset.index = index;
@@ -243,6 +342,22 @@
     });
 
     swiper.update();
+
+    view.whenLayerView(photoLayer).then((layerView) => {
+          if (highlightHandle) {
+            highlightHandle.remove(); // Clear previous highlights
+          }
+
+          highlightHandle = layerView.highlight(features[swiper.activeIndex]);
+
+          // Zoom to the feature
+          view.goTo({
+            center: features[swiper.activeIndex].geometry,
+            zoom: 15
+          });
+        });
+
+    
 
     // Synchronize Swiper slide change with map
     swiper.on("slideChange", () => {
@@ -261,7 +376,7 @@
           // Zoom to the feature
           view.goTo({
             center: activeFeature.geometry,
-            zoom: 12
+            zoom: 15
           });
         });
       }
@@ -277,6 +392,14 @@
           swiper.slideTo(clickedIndex);
         }
       });
+    });
+
+     $("#openModal").click(function(){
+      modal.isOpen = true;
+    });
+
+    $("#close").click(function(){
+      modal.isOpen = false;
     });
   });
 });
