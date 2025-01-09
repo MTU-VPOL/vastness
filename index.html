@@ -127,6 +127,7 @@
     }
 
     #date {
+      font-family: 'Rambla', serif;
       position: fixed;
       top: 10;
       left: 30px;
@@ -334,7 +335,7 @@
       slide.className = "swiper-slide";
       slide.innerHTML = `
         <img src="images/${attributes.Image_No}.jpg" alt="${attributes.Caption}" style="width: 100%; height: auto;">
-        <div id="date">Photo taken on ${attributes.Date}</p></div>
+        <div id="date"><i>Photo taken on ${attributes.Date}</p></i></div>
         <div id="caption"><p>${attributes.Caption}</p></div>
       `;
       slide.dataset.index = index;
